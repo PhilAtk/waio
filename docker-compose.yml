@@ -1,0 +1,45 @@
+services:
+  rev-proxy:
+    build:
+      context: ./rev-proxy
+    container_name: rev-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+    networks:
+      - dev-net
+    restart: unless-stopped
+
+  waio-dev:
+    build:
+      context: ./waio-dev
+    container_name: waio-dev
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+    networks:
+      - dev-net
+    restart: unless-stopped
+
+  rhythmology:
+    build:
+      context: ./rhythmology
+    container_name: rhythmology
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+    networks:
+      - dev-net
+    restart: unless-stopped
+
+  rhythmology-php:
+    image: php:fpm-alpine
+    container_name: rhythmology-php
+    volumes:
+      - ./rhythmology/www:/usr/share/nginx/html:ro
+    networks:
+      - dev-net
+
+networks:
+  dev-net:
+    driver: bridge
